@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10
+        with:
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+
+      # Only the dev extra here. instagrapi is checked on its own below, on one
+      # platform, so a wheel problem on Windows cannot fail the whole matrix for
+      # an optional dependency most users never install.
+      - run: uv sync --extra dev
+
+      - run: uv run ruff check .
+
+      # The suite covers the server building, all 45 tools registering with
+      # descriptions and schemas, write gating, and injection framing. It runs
+      # against a scripted transport and never touches the network.
+      - run: uv run pytest -q
+
+  unofficial-imports:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - run: uv sync --all-extras
+
+      - name: The unofficial tier must import
+        run: uv run python -c "import instagrapi, instagram_mcp.unofficial; print('ok')"
