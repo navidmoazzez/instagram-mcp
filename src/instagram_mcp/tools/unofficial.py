@@ -9,7 +9,7 @@ reported by unofficial_status. Follow, unfollow and bulk like are the three
 actions that get accounts restricted fastest, and they are what every
 growth-hack tool ships. Leaving them out is the positioning, not an oversight.
 
-Writes on this tier need --unofficial AND --allow-write. Two flags, because a
+Writes on this tier need the tier turned on and confirm=true on the call. A
 message sent from a private-API session is both the most useful and the most
 dangerous thing here.
 """
@@ -23,7 +23,7 @@ from mcp.types import ToolAnnotations
 
 from ..config import Tier
 from ..runtime import Runtime, result
-from ..safety import NOT_IMPLEMENTED, audit, frame_rows, require_write
+from ..safety import NOT_IMPLEMENTED, audit, frame_rows, require_confirm, require_write
 from ..unofficial import simplify
 
 READ = ToolAnnotations(readOnlyHint=True, openWorldHint=True)
@@ -59,7 +59,7 @@ def register(server: MCPServer, runtime: Runtime) -> None:
         return {
             "enabled": settings.unofficial,
             "session_file_present": session.exists(),
-            "writes_allowed": settings.allow_write,
+            "writes_allowed": not settings.read_only,
             "pacing": unofficial.pacer_status(),
             "deliberately_not_implemented": NOT_IMPLEMENTED,
             "note": (
@@ -182,12 +182,20 @@ def register(server: MCPServer, runtime: Runtime) -> None:
         description=(
             "Send a direct message with no 24-hour window and no prior contact. This is the "
             "thing the official API cannot do, and it is also the thing most likely to get an "
-            "account restricted. Needs both --unofficial and --allow-write."
+            "account restricted. Needs the unofficial tier on, and confirm=true."
         ),
         annotations=WRITE,
     )
-    async def unofficial_send_dm(username: str, message: str) -> dict[str, Any]:
+    async def unofficial_send_dm(
+        username: str, message: str, confirm: bool = False
+    ) -> dict[str, Any]:
         require_write(settings, "unofficial_send_dm")
+        require_confirm(
+            confirm,
+            "unofficial_send_dm",
+            "sends a cold DM from a private-API session. It cannot be unsent and it is the "
+            "single most likely action here to get the account restricted.",
+        )
         user_id = await _user_id(username)
         sent = await unofficial.run("direct_send", message, user_ids=[int(user_id)])
         audit(

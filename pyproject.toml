@@ -1,5 +1,9 @@
 [project]
-name = "instagram-mcp"
+# The plain name "instagram-mcp" is already published on PyPI by somebody else,
+# so telling a reader to install it would fetch a stranger's code. PyPI has no
+# scopes, so an owner prefix is the closest equivalent to the @thenavidm npm
+# scope the other servers use. The installed command is still `instagram-mcp`.
+name = "thenavidm-instagram-mcp"
 version = "0.1.0"
 description = "Instagram for AI agents. Official Graph API plus an opt-in unofficial tier, behind one tool surface."
 readme = "README.md"
@@ -43,6 +47,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/instagram_mcp"]
+# SKILL.md ships inside the package so an agent that installs the server also
+# learns how to drive it. The README teaches a person to install it; SKILL.md
+# teaches a model to use it well.
+force-include = { "SKILL.md" = "instagram_mcp/SKILL.md" }
 
 [tool.ruff]
 line-length = 100

@@ -1,11 +1,13 @@
 # Instagram MCP
 
-Give any AI agent access to Instagram. Read your own accounts, research any
-Business or Creator account on the platform, publish, and answer comments, from
-Claude, ChatGPT, Cursor, or any MCP client.
+Instagram MCP server for Claude Code and AI agents. Read your own accounts, research any Business or Creator account on the platform, publish, and answer comments.
 
-Three tiers of access behind one tool surface, and every answer tells you which
-tier it came from.
+Three tiers of access behind one tool surface, and every answer tells you which tier it came from.
+
+[![PyPI](https://img.shields.io/pypi/v/thenavidm-instagram-mcp?color=blue)](https://pypi.org/project/thenavidm-instagram-mcp/)
+[![Licence](https://img.shields.io/badge/licence-MIT-green)](./LICENSE)
+[![YouTube](https://img.shields.io/badge/YouTube-@thenavidm-red?logo=youtube&logoColor=white)](https://youtube.com/@thenavidm?sub_confirmation=1)
+[![X](https://img.shields.io/badge/X-@thenavidm-black?logo=x)](https://x.com/thenavidm)
 
 Built by [Navid Moazzez](https://navid.me).
 
@@ -32,21 +34,23 @@ Claude: Reading your account, then comparing.
 
 | | Section | |
 |---|---|---|
-| 1 | [What you can ask it](#1-what-you-can-ask-it) | Real prompts, not features |
-| 2 | [The three tiers](#2-the-three-tiers) | Read this before installing |
-| 3 | [Install](#3-install) | Every client, copy and paste |
-| 4 | [Getting a token](#4-getting-a-token) | The part everyone gives up on |
-| 5 | [Tools](#5-tools) | All 45, by tier |
-| 6 | [Safety](#6-safety) | Why it cannot write by default |
-| 7 | [The unofficial tier](#7-the-unofficial-tier) | Extra reach, real risk |
-| 8 | [Your data](#8-your-data) | What is stored and where |
-| 9 | [Risks](#9-risks) | Read this before you install |
-| 10 | [Troubleshooting](#10-troubleshooting) | Start with `doctor` |
-| 11 | [Build from source](#11-build-from-source) | Contributing |
+| 1 | [What you can ask it](#1-what-you-can-ask-it-) | Real prompts, not features |
+| 2 | [Quick install](#2-quick-install-) | The package, no account needed |
+| 3 | [Create your Meta app](#3-create-your-meta-app-) | Every click. This is the part people give up on |
+| 4 | [Get your token](#4-get-your-token-) | One command does the exchange |
+| 5 | [Connect your client](#5-connect-your-client-) | Claude Code, Desktop, Cursor, the rest |
+| 6 | [Check it worked](#6-check-it-worked-) | `doctor`, and the two things that actually fail |
+| 7 | [Tools](#7-tools-) | All 45, by what they reach |
+| 8 | [The three tiers](#8-the-three-tiers-) | What each one can see |
+| 9 | [Multiple accounts](#9-multiple-accounts-) | One server, several logins |
+| 10 | [Notes and gotchas](#10-notes-and-gotchas-) | Quotas, windows, and silent failures |
+| 11 | [Troubleshooting](#11-troubleshooting-) | Symptom to cause |
+| 12 | [Build from source](#12-build-from-source-) | Run the tests |
+| | [FAQ](#faq-) | Including what an MCP server is |
 
 ---
 
-## 1. What you can ask it
+## 1. What you can ask it 💬
 
 - Which of my posts from the last month is still gaining likes?
 - How many followers did I gain this week, and which post caused it?
@@ -63,83 +67,126 @@ reads, so it can answer the version of the question people actually have.
 
 ---
 
-## 2. The three tiers
+## 2. Quick install ⚡
 
-Instagram does not have one API. It has two, plus a private one, and they reach
-completely different things. Every other MCP server picks one and does not tell
-you which.
-
-| Tier | What it reaches | Runs where | Risk |
-|---|---|---|---|
-| **Instagram Login** | only accounts you own | anywhere | none |
-| **Facebook Login** | the above, plus public data on any Business or Creator account, plus hashtags | anywhere | none |
-| **Unofficial** | any public account, the real inbox, search | a machine you control | your account can be restricted |
-
-Most people want the middle one and do not know it exists. `discover_account`
-is an official, free, documented Graph endpoint that returns any Business or
-Creator account's follower count, biography and recent posts with engagement.
-No scraping, no risk, no browser.
-
-The unofficial tier is off unless you turn it on, and it is not even installed
-by default.
-
-Every tool result carries a `source` field naming the tier that answered, so a
-model can never present a scraped guess as an official metric.
-
----
-
-## 3. Install
-
-### Step 1: get it
-
-**Official tiers only.** This is what most people want.
+Python 3.11 or newer. No Instagram account needed for this step.
 
 ```bash
-uv tool install instagram-mcp
+uv tool install thenavidm-instagram-mcp
 ```
 
-Or run it without installing:
-
-```bash
-uvx instagram-mcp
-```
-
-**With the unofficial tier.** Only if you have read [section 9](#9-risks).
-
-```bash
-uv tool install "instagram-mcp[unofficial]"
-```
-
-No `uv` yet:
+No `uv` yet? It is a Python package manager, one command to install:
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Check it worked:
+Check it:
 
 ```bash
 instagram-mcp --version
 ```
 
-### Step 2: get a token
+The package is `thenavidm-instagram-mcp`. The command it installs is
+`instagram-mcp`. They differ because the short name on PyPI belongs to somebody
+else, and installing that would fetch code that is not this.
 
-See [section 4](#4-getting-a-token). Then check it:
+To add the unofficial tier as well, see [section 8](#8-the-three-tiers-) first,
+then:
 
 ```bash
-instagram-mcp doctor
+uv tool install "thenavidm-instagram-mcp[unofficial]"
 ```
 
-`doctor` is the whole troubleshooting story. It tests every token, names which
-insight metrics your account still answers, and tells you whether
-`business_discovery` works on your app. Run it before anything else.
+---
 
-### Step 3: add it to your client
+## 3. Create your Meta app 🔑
 
-Add `"--allow-write"` to the arguments if you want it to publish and reply as
-well as read. It is read-only without that.
+Instagram's API does not hand out tokens directly. You create an app in Meta's
+developer dashboard, and the app issues the token. It is free and takes about
+ten minutes.
 
-#### Claude Code
+**Before you start:** your Instagram account must be a **Business** or
+**Creator** account, not a personal one. Instagram's API does not work on
+personal accounts at all, on any tier except the unofficial one. Switch in the
+Instagram app under Settings, then Account type and tools.
+
+### Step 1: create the app
+
+1. Go to [developers.facebook.com/apps](https://developers.facebook.com/apps) and log in.
+2. Click **Create app**.
+3. App name: anything. Contact email: yours.
+4. Under **Use cases**, pick **Other**, then **Next**.
+5. App type: **Business**, then **Next**, then **Create app**.
+
+### Step 2: add the product
+
+In the left sidebar, find **Add product**.
+
+- For the **Facebook Login** path, add **Facebook Login for Business**.
+- For the **Instagram Login** path, add **Instagram**.
+
+Pick Facebook Login unless you have a reason not to. It is the only path that
+reaches `discover_account` and the hashtag tools, and the Page tokens it returns
+do not expire. It does require your Instagram account to be linked to a Facebook
+Page, which is done in the Instagram app under Settings, then Sharing to other
+apps.
+
+### Step 3: note your app id and secret
+
+Left sidebar, **App settings**, then **Basic**. Copy the **App ID** and click
+**Show** next to **App secret**. You need both in section 4.
+
+### Step 4: generate a short-lived token
+
+1. Open [Graph API Explorer](https://developers.facebook.com/tools/explorer).
+2. Top right, select your app from the dropdown.
+3. Click **Generate access token** and approve the dialog.
+4. Add the scopes for your path, then click **Generate access token** again.
+
+| Path | Scopes |
+|---|---|
+| Facebook Login (recommended) | `instagram_basic`, `instagram_content_publish`, `instagram_manage_insights`, `instagram_manage_comments`, `pages_show_list`, `pages_read_engagement` |
+| Instagram Login | `instagram_business_basic`, `instagram_business_content_publish`, `instagram_business_manage_comments`, `instagram_business_manage_messages` |
+
+Copy the token. It expires in about an hour, which is fine: section 4 trades it
+for a long-lived one.
+
+---
+
+## 4. Get your token 🔑
+
+One command does the exchange:
+
+```bash
+instagram-mcp token \
+  --app-id YOUR_APP_ID \
+  --app-secret YOUR_APP_SECRET \
+  --short-token THE_SHORT_LIVED_TOKEN \
+  --path facebook
+```
+
+It swaps the short-lived token for a long-lived one, finds every Page you manage
+with a linked Instagram account, and prints a ready-to-paste `IG_ACCOUNTS_FILE`.
+
+Instagram Login tokens expire after 60 days. Extend them before they do:
+
+```bash
+instagram-mcp refresh
+```
+
+Facebook Login Page tokens do not expire, which is the other reason to prefer
+that path.
+
+---
+
+## 5. Connect your client 🔌
+
+Writes are on. There is no flag to enable publishing or replying. The actions
+that cannot be undone from a chat window ask the model to pass `confirm: true`
+first, and `IG_READ_ONLY=1` removes every write tool if you want a reader.
+
+### Claude Code
 
 ```bash
 claude mcp add --transport stdio instagram \
@@ -148,18 +195,8 @@ claude mcp add --transport stdio instagram \
   -- instagram-mcp
 ```
 
-Everything after `--` is passed to the binary untouched, so writes look like
-this:
-
-```bash
-claude mcp add --transport stdio instagram \
-  --env IG_ACCESS_TOKEN=your_token \
-  --env IG_USER_ID=your_ig_user_id \
-  -- instagram-mcp --allow-write
-```
-
-By default this applies to the current project only. To use it everywhere, add
-`--scope user`.
+By default this applies to the current project only. Add `--scope user` to use
+it everywhere.
 
 | Command | What it does |
 |---|---|
@@ -167,7 +204,7 @@ By default this applies to the current project only. To use it everywhere, add
 | `claude mcp get instagram` | Show this server's status |
 | `/mcp` | Check the connection from inside a session |
 
-#### Claude Desktop
+### Claude Desktop
 
 | Platform | Config path |
 |---|---|
@@ -188,26 +225,14 @@ By default this applies to the current project only. To use it everywhere, add
 }
 ```
 
-The path must be absolute. Claude Desktop does not inherit your shell PATH, so
-a bare command name will fail. Get the absolute path with
+The path must be absolute. Claude Desktop does not inherit your shell PATH, so a
+bare command name fails silently. Get the absolute path with
 `which instagram-mcp` on macOS or `where instagram-mcp` on Windows. On Windows,
 escape the backslashes.
 
-Quit Claude Desktop completely and reopen it.
+Quit Claude Desktop completely and reopen it. Closing the window is not enough.
 
-#### claude.ai and other remote clients
-
-Run it over HTTP:
-
-```bash
-instagram-mcp --http --host 0.0.0.0 --port 8000
-```
-
-Then add `https://your-host/mcp` as a custom connector. Put it behind TLS and
-an authenticating proxy. This server holds tokens for your Instagram accounts
-and has no authentication of its own.
-
-#### Cursor
+### Cursor
 
 `.cursor/mcp.json`:
 
@@ -225,13 +250,183 @@ and has no authentication of its own.
 }
 ```
 
-#### VS Code, Windsurf, Zed, Cline, Codex CLI, Gemini CLI
+### claude.ai and other remote clients
+
+Run it over HTTP:
+
+```bash
+instagram-mcp --http --host 0.0.0.0 --port 8000
+```
+
+Then add `https://your-host/mcp` as a custom connector.
+
+Put it behind TLS and an authenticating proxy. This server holds tokens for your
+Instagram accounts and has no authentication of its own.
+
+### VS Code, Windsurf, Zed, Cline, Codex CLI, Gemini CLI
 
 All of them take the same three things: the command `instagram-mcp`, any flags
 as arguments, and the environment variables above. See
 [docs/clients.md](docs/clients.md) for the exact file and key names.
 
-### Multiple accounts
+---
+
+## 6. Check it worked 🩺
+
+```bash
+instagram-mcp doctor
+```
+
+`doctor` is the whole troubleshooting story. It tests every token, names which
+insight metrics your account still answers, and tells you whether
+`business_discovery` works on your app. Run it before anything else.
+
+Two things fail more than everything else combined:
+
+**A personal account.** The API returns an empty or confusing error rather than
+saying so. `doctor` says so plainly.
+
+**A token generated without the scopes.** Adding scopes in Graph API Explorer
+does not update a token you already copied. Generate a new one after adding
+them.
+
+---
+
+## 7. Tools 🛠️
+
+45 tools. Every result carries a `source` field naming the tier that answered,
+so a model can never present a scraped guess as an official metric.
+
+### Your accounts
+
+| Tool | What it does |
+|---|---|
+| `list_accounts` | Every connected account with live follower counts and which tier it reaches |
+| `whoami` | Verify one token, return the live profile |
+| `token_status` | When each token expires and whether it can be refreshed |
+| `get_media` | Recent posts with permalinks and engagement |
+| `list_all_media` | Every post, paging until the history is exhausted |
+| `get_media_by_id` | One post, full fields |
+| `list_tagged_media` | Posts by other accounts that tagged you |
+| `list_stories` | Stories live right now |
+| `get_media_insights` | Reach, saves, shares and interactions for one post |
+| `get_account_insights` | Account-level reach and profile views over a period |
+| `get_publishing_limit` | How many of the 100 daily API posts you have used |
+| `growth_history` | Follower counts over time, from local readings |
+| `post_movement` | Which posts are still gaining, and by how much |
+
+`growth_history` and `post_movement` read the local store, not Instagram. They
+are empty until the server has taken readings on more than one day, and they
+cannot be back-filled. This is the reason to install it before you need it.
+
+### Publishing
+
+| Tool | Needs `confirm` |
+|---|---|
+| `create_container` | no, nothing goes public |
+| `publish_container` | yes |
+| `post` | yes |
+| `post_carousel` | yes |
+| `publish_reel` | yes |
+| `publish_story` | yes |
+
+`create_container` stages media without posting. Nothing appears in the app and
+the container expires unused after 24 hours. It is the only draft-like state
+Instagram has, so it is what to use when a person should approve something
+before it goes live.
+
+Instagram has no native scheduling. Anything that claims to schedule a post is
+holding the job somewhere else and publishing it at the time.
+
+### Comments and messages
+
+| Tool | Needs `confirm` |
+|---|---|
+| `get_comments` | read |
+| `get_comment_replies` | read |
+| `read_all_comments` | read |
+| `list_conversations` | read |
+| `get_conversation` | read |
+| `reply_to_comment` | no, a reply can be deleted |
+| `hide_comment` | no, hiding is reversible |
+| `delete_comment` | yes, it is permanent |
+| `send_dm` | yes, a message cannot be unsent |
+| `private_reply_to_comment` | yes, and only one is allowed per comment |
+
+`read_all_comments` pulls comments across your recent posts in one call. It is
+what comment triage and sentiment questions actually need, and doing it through
+`get_comments` in a loop burns the context window before it answers anything.
+
+### Research
+
+| Tool | What it does |
+|---|---|
+| `discover_account` | Public profile and recent posts for any Business or Creator account |
+| `compare_accounts` | Up to 10 accounts side by side with median engagement |
+| `search_hashtag` | Resolve a hashtag to its id, remembering the result |
+| `hashtag_top_media` | What is performing on a hashtag right now |
+| `hashtag_recent_media` | What is being posted on a hashtag right now |
+
+These need the Facebook Login path. `discover_account` is an official, free,
+documented Graph endpoint. No scraping, no risk, no browser.
+
+### Unofficial
+
+Off unless you turn it on. See [section 8](#8-the-three-tiers-).
+
+| Tool | What it does |
+|---|---|
+| `unofficial_status` | Whether the tier is on, and what is deliberately not implemented |
+| `unofficial_profile` | Full public profile for any account, including personal ones |
+| `unofficial_posts` | Recent posts by any public account |
+| `unofficial_stories` | Stories live on any public account |
+| `unofficial_followers` | Followers, newest first, capped at 200 |
+| `unofficial_following` | Accounts an account follows, capped at 200 |
+| `unofficial_search_accounts` | Search accounts by name or keyword |
+| `unofficial_post_comments` | Comments on any public post |
+| `unofficial_inbox` | Your real inbox, including message requests |
+| `unofficial_thread` | Messages inside one inbox thread |
+| `unofficial_send_dm` | A cold DM. Needs `confirm` |
+
+Three things are deliberately absent: `follow_user`, `unfollow_user` and
+`bulk_like`. They are what every growth-hack tool ships and they are the three
+actions that get accounts restricted fastest. `unofficial_status` reports them
+as missing on purpose, so it is a decision on the record rather than an
+oversight.
+
+---
+
+## 8. The three tiers 🎚️
+
+Instagram does not have one API. It has two, plus a private one, and they reach
+completely different things.
+
+| Tier | What it reaches | Runs where | Risk |
+|---|---|---|---|
+| **Instagram Login** | only accounts you own | anywhere | none |
+| **Facebook Login** | the above, plus public data on any Business or Creator account, plus hashtags | anywhere | none |
+| **Unofficial** | any public account, the real inbox, account search | a machine you control | your account can be restricted |
+
+Most people want the middle one and do not know it exists.
+
+The unofficial tier drives Instagram's private API through `instagrapi`. That is
+against Instagram's terms of service and it can get an account restricted or
+banned. It is not installed by default, it is off unless you set
+`IG_UNOFFICIAL=1` or pass `--unofficial`, and it prints a warning on stderr when
+it starts. Point it at a secondary account, never your main one.
+
+It also paces itself: a random delay between calls and a local hourly ceiling
+that is lower than Instagram's own. Instagram restricts accounts for
+machine-speed access patterns more than for volume.
+
+```bash
+instagram-mcp login          # once, saves a session file
+IG_UNOFFICIAL=1 instagram-mcp
+```
+
+---
+
+## 9. Multiple accounts 👥
 
 Point `IG_ACCOUNTS_FILE` at a JSON array instead of setting a single token.
 Mixed tiers in one file are fine and expected.
@@ -262,314 +457,195 @@ IG_PREFERRED=thenavidm,thenavidai
 
 ---
 
-## 4. Getting a token
+## 10. Notes and gotchas ⚠️
 
-This is where most people give up. There is a command for it.
+**100 posts per 24 hours**, per account, across every API client. Not just this
+one. `get_publishing_limit` tells you where you are.
 
-First, in the Meta developer dashboard: create an app, add the Instagram
-product, and generate a short-lived user token in Graph API Explorer with these
-scopes.
+**30 unique hashtags per rolling 7 days.** Resolved ids are cached locally so
+repeat lookups do not spend a slot, but the thirty-first new hashtag in a week
+fails.
 
-| Path | Scopes |
-|---|---|
-| Facebook Login (recommended) | `instagram_basic`, `instagram_content_publish`, `instagram_manage_insights`, `instagram_manage_comments`, `pages_show_list`, `pages_read_engagement` |
-| Instagram Login | `instagram_business_basic`, `instagram_business_content_publish`, `instagram_business_manage_comments`, `instagram_business_manage_messages` |
+**`business_discovery` sees Business and Creator accounts only.** Never personal
+ones, never private ones. It returns an error that does not say which of those
+it is.
 
-Then run this, and it does the rest:
+**DMs need a 24-hour window.** Instagram allows a DM only inside a window opened
+by the other person messaging you, or as one private reply to a comment. There
+is no official way to message somebody cold.
 
-```bash
-instagram-mcp token \
-  --app-id YOUR_APP_ID \
-  --app-secret YOUR_APP_SECRET \
-  --short-token THE_SHORT_LIVED_TOKEN \
-  --path facebook
-```
+**Reading DMs needs Advanced Access** from Meta App Review on most apps.
+`list_conversations` returns empty rather than erroring until you have it.
 
-It exchanges the short-lived token for a long-lived one, finds every Page you
-manage with a linked Instagram account, and prints a ready-to-paste
-`IG_ACCOUNTS_FILE`.
+**Insight metrics change.** Meta deprecates and renames them regularly. `doctor`
+names which ones your account still answers, which is faster than reading the
+changelog.
 
-Pick `--path facebook` unless you have a reason not to. It is the only path
-that reaches `discover_account` and the hashtag tools, and the Page tokens it
-returns do not expire.
+**Comments and DMs are written by strangers.** Every text field from another
+person comes back wrapped in an untrusted-content fence telling the model to
+report it, not obey it. This is the most injectable surface an agent gets handed,
+and "summarise my comments" is one of the first things anyone asks.
 
-Instagram Login tokens expire after 60 days. Extend them:
-
-```bash
-instagram-mcp refresh
-```
-
-Your account is a Business or Creator account, not a personal one. Instagram's
-API does not work on personal accounts at all, on any tier except the
-unofficial one.
+**Every write is logged.** One JSON line per attempted write, allowed or
+refused, to `IG_AUDIT_LOG` or the data directory. The model has no tool to read
+or edit that file.
 
 ---
 
-## 5. Tools
+## 11. Troubleshooting 🔧
 
-45 tools. Everything is read-only until you start the server with
-`--allow-write`.
-
-### Your accounts (Instagram Login or Facebook Login)
-
-| Tool | What it does |
-|---|---|
-| `list_accounts` | Every connected account with live follower counts and which tier it reaches |
-| `whoami` | Verify one token, return the live profile |
-| `token_status` | When each token expires and whether it can be refreshed |
-| `get_media` | Recent posts with permalinks and engagement |
-| `list_all_media` | Every post, paging until the history is exhausted |
-| `get_media_by_id` | One post, full fields |
-| `list_tagged_media` | Posts by other accounts that tagged you |
-| `list_stories` | Stories live right now |
-| `get_media_insights` | Reach, saves, shares and interactions for one post |
-| `get_account_insights` | Account-level reach and profile views over a period |
-| `get_publishing_limit` | How many of the 100 daily API posts you have used |
-| `growth_history` | Follower counts over time, from local readings |
-| `post_movement` | Which posts are still gaining, and by how much |
-
-`growth_history` and `post_movement` read the local store, not Instagram. They
-are empty until the server has taken readings on more than one day, and they
-cannot be back-filled.
-
-### Publishing (needs `--allow-write`)
-
-| Tool | What it does |
-|---|---|
-| `create_container` | Stage media without posting. The only draft-like state Instagram has |
-| `publish_container` | Publish a staged container |
-| `post` | Stage, wait for processing, publish, in one call |
-| `post_carousel` | 2 to 10 images |
-| `publish_reel` | A reel from a public video URL, with an optional cover |
-| `publish_story` | An image or video story |
-
-Instagram has no native scheduling. Anything that claims to schedule a post is
-holding the job somewhere else and publishing it at the time.
-
-### Comments and messages
-
-| Tool | Needs write |
-|---|---|
-| `get_comments` | no |
-| `get_comment_replies` | no |
-| `read_all_comments` | no |
-| `list_conversations` | no |
-| `get_conversation` | no |
-| `reply_to_comment` | yes |
-| `hide_comment` | yes |
-| `delete_comment` | yes, and it is permanent |
-| `send_dm` | yes |
-| `private_reply_to_comment` | yes |
-
-`read_all_comments` pulls comments across your recent posts in one call. It is
-what comment triage and sentiment questions actually need, and doing it through
-`get_comments` in a loop burns the context window before it answers anything.
-
-Instagram only allows a DM inside a 24-hour window opened by the other person
-messaging you, or as one private reply to a comment. There is no official way
-to message somebody cold.
-
-### Research (needs Facebook Login)
-
-| Tool | What it does |
-|---|---|
-| `discover_account` | Public profile and recent posts for any Business or Creator account |
-| `compare_accounts` | Up to 10 accounts side by side with median engagement |
-| `search_hashtag` | Resolve a hashtag to its id, remembering the result |
-| `hashtag_top_media` | What is performing on a hashtag right now |
-| `hashtag_recent_media` | What is being posted on a hashtag right now |
-
-Two limits worth knowing before you plan around them. `business_discovery` sees
-Business and Creator accounts only, never personal or private ones. And
-Instagram caps you at 30 unique hashtags per rolling 7 days, so resolved
-hashtag ids are stored on disk and reused rather than spending another one.
-
-### Unofficial (needs `--unofficial`)
-
-| Tool | What it does |
-|---|---|
-| `unofficial_status` | Whether the tier is on, session state, pacing, and what is deliberately missing |
-| `unofficial_profile` | Any public account, including personal ones |
-| `unofficial_posts` | Any public account's posts |
-| `unofficial_stories` | Somebody else's live stories |
-| `unofficial_followers` | Followers, capped at 200 |
-| `unofficial_following` | Following, capped at 200 |
-| `unofficial_search_accounts` | Account search |
-| `unofficial_post_comments` | Comments on any public post |
-| `unofficial_inbox` | Your real inbox, including message requests |
-| `unofficial_thread` | Messages in one thread |
-| `unofficial_send_dm` | A DM with no window and no prior contact. Needs `--allow-write` too |
-
-**Deliberately not implemented: `follow_user`, `unfollow_user`, `bulk_like`.**
-Those three are what get accounts restricted fastest and they are what every
-growth-hack tool ships. This is a decision, not a gap, and it is not going to
-change.
-
----
-
-## 6. Safety
-
-Instagram is not a private notebook. It is a public surface where strangers
-write text that your agent will read, and where a single bad write is visible
-to your whole audience. Four separate problems, four separate mechanisms.
-
-**Writes are off by default.** Nothing publishes, replies, hides, deletes or
-sends unless the server was started with `--allow-write`. A misread instruction
-cannot post to your feed on a default install.
-
-**Comments and DMs are framed as untrusted.** Every piece of text written by
-somebody else comes back wrapped in an explicit fence telling the model to
-report it and not to obey it. A comment on a public post is the most trivially
-injectable surface an agent will ever be handed, and "summarise my comments" is
-one of the first things anyone asks.
-
-**Every write is logged.** An append-only file records what was done, to what,
-and when. No tool can read or edit it, so there is always a record of what an
-agent did in your name.
-
-**The unofficial tier paces itself.** Human-ish delays between calls and a
-local hourly ceiling, lower than Instagram's own. Instagram restricts accounts
-for machine-speed access patterns more than for volume.
-
----
-
-## 7. The unofficial tier
-
-This tier logs in as you, the way the phone app does, and reaches everything
-the official APIs refuse: any public account's full history, followers and
-following, other people's stories, search, and your real inbox.
-
-It is gated twice. The library it needs is not installed by default, and the
-server refuses to use it without `--unofficial`.
-
-Log in once, in a terminal:
-
-```bash
-instagram-mcp login
-```
-
-It asks for your username and password, handles two-factor, and writes a
-session file with owner-only permissions. **Your password is never stored and
-never goes into any config file.**
-
-That matters more than it sounds. An MCP client config is a JSON file people
-paste into issues, screenshots and Discord threads, and it is read by every MCP
-server your client runs, not just this one. A password does not belong in it,
-so this server never asks for one there.
-
-Then start the server with the flag:
-
-```bash
-instagram-mcp --unofficial
-```
-
-**Use a secondary account.** Not the one with your audience on it. Read
-[section 9](#9-risks) first.
-
----
-
-## 8. Your data
-
-Everything stays on your machine. This server has no backend and phones nothing
-home.
-
-| Platform | Location |
-|---|---|
-| macOS | `~/Library/Application Support/instagram-mcp/` |
-| Linux | `~/.local/share/instagram-mcp/` |
-| Windows | `%LOCALAPPDATA%\instagram-mcp\` |
-
-| File | What is in it |
-|---|---|
-| `instagram-mcp.db` | Follower and engagement readings over time, and hashtag ids |
-| `session.json` | The unofficial tier's session. Owner-only permissions. Only if you ran `login` |
-| `audit.log` | Every write, append-only |
-
-Override the directory with `IG_MCP_DATA_DIR`.
-
-Nothing here is a cache. Reads always go to Instagram and the store is written
-as a side effect, so a stale row can never be served as a live answer.
-
----
-
-## 9. Risks
-
-**The unofficial tier can get your Instagram account restricted or disabled.**
-This is not a theoretical risk and it is not rare. Instagram detects automated
-access and acts on it. If your account is your business, an account you cannot
-recover is worse than any question this server can answer for you. Use a
-secondary account. The pacing here reduces the risk and does not remove it.
-
-**The unofficial tier is against Instagram's Terms of Use.** That is a fact, and
-no disclaimer changes it. You accept it by passing the flag.
-
-**Your agent will read text written by strangers.** Comments and DMs are framed
-as untrusted before they reach the model, which is a strong mitigation and not a
-guarantee. Do not combine `--unofficial`, `--allow-write` and an unattended
-agent loop.
-
-**Tokens are credentials.** A long-lived Instagram token can post as you. It
-lives in your MCP client config or an accounts file. Treat that file the way you
-treat an SSH key, and never commit it.
-
-**`delete_comment` is permanent.** There is no undo. Prefer `hide_comment`,
-which leaves the comment visible to whoever wrote it.
-
-The official tiers carry none of this. If you never pass `--unofficial`, the
-worst case here is an expired token.
-
----
-
-## 10. Troubleshooting
-
-Run this first. It answers most of it.
-
-```bash
-instagram-mcp doctor
-```
+Run `instagram-mcp doctor` first. It diagnoses most of this.
 
 | Symptom | Cause |
 |---|---|
-| "No Instagram account configured" | `IG_ACCESS_TOKEN` and `IG_USER_ID` are not reaching the server. Client configs do not inherit your shell environment |
-| Every call fails with code 190 | The token expired. Run `instagram-mcp refresh`, or re-mint with `instagram-mcp token` |
-| `discover_account` says it needs Facebook Login | You are on an Instagram Login token. Re-run `instagram-mcp token --path facebook` |
-| An insights call fails on one metric | Meta retired it. `doctor` names the working set. Pass `metrics=` to override |
-| DM tools return a permissions error | Reading DMs needs Advanced Access through Meta App Review on most apps |
-| An unofficial tool says the session is invalid | Run `instagram-mcp login` again. If Instagram keeps challenging you, stop rather than retrying |
-| "Instagram asked us to wait" | The early warning before a restriction. Stop using the unofficial tier for a few hours |
-| Claude Desktop shows no tools | The command path is not absolute, or the app was not fully quit and reopened |
+| Every tool returns nothing | Personal account. The API needs Business or Creator |
+| `(#100) Tried accessing nonexisting field` | Token generated before you added the scopes. Generate a new one |
+| `discover_account` fails | You are on the Instagram Login path. It needs Facebook Login |
+| Hashtag tools stop working | 30 unique hashtags in a rolling 7 days |
+| Server missing in Claude Desktop | Relative command path. Use the absolute one, and fully quit the app |
+| `growth_history` is empty | It needs readings from more than one day. It cannot back-fill |
+| Write tools are absent | `IG_READ_ONLY` is set |
+| A write asks for confirmation | Working as intended. Call it again with `confirm: true` |
+| Unofficial tools refuse | Tier is off. Set `IG_UNOFFICIAL=1` and run `instagram-mcp login` once |
 
 ---
 
-## 11. Build from source
+## 12. Build from source 🏗️
 
 ```bash
-git clone https://github.com/thenavidm/instagram-mcp.git
+git clone https://github.com/thenavidm/instagram-mcp
 cd instagram-mcp
-uv sync --all-extras
+uv sync
 uv run pytest
-uv run ruff check .
 ```
 
-The tests run against a fake HTTP transport and never touch the network or your
-session file.
+The tests run against a faked transport and never touch the network, so they are
+safe to run without a token.
 
-Layout:
+---
 
-| Path | What it is |
-|---|---|
-| `src/instagram_mcp/config.py` | Settings, accounts, and the tier model |
-| `src/instagram_mcp/graph.py` | The official HTTP layer, both hosts |
-| `src/instagram_mcp/safety.py` | Write gating, pacing, audit log, injection framing |
-| `src/instagram_mcp/store.py` | SQLite, so the server can answer "what changed" |
-| `src/instagram_mcp/unofficial.py` | instagrapi, behind the flag |
-| `src/instagram_mcp/tools/` | One module per tier |
+## FAQ ❓
 
-Read `safety.py` first. It is the argument for using this one.
+<details>
+<summary><strong>What is an MCP server?</strong></summary>
 
-## About the author
+Model Context Protocol is a standard way to give an AI assistant access to a
+tool or a data source. An MCP server exposes a set of functions, and a client
+like Claude Code or Claude Desktop can call them during a conversation. This one
+exposes Instagram.
 
-Navid Moazzez is a leading AI business strategist and the host of the AI Creator Summit, watched by 100,000+ creators. He helps creators and founders master AI and build their own AI Operating System (AI OS) to automate their business and life. This Instagram MCP server is one piece of that system.
+You install it once, put your credentials in the client's config, and then ask
+in plain language. You do not call the tools yourself.
+</details>
+
+<details>
+<summary><strong>Do I need a Business account?</strong></summary>
+
+Yes, for everything except the unofficial tier. Instagram's API does not work on
+personal accounts. Switching is free and reversible, in the Instagram app under
+Settings, then Account type and tools.
+</details>
+
+<details>
+<summary><strong>Why do I have to create a Meta app? That seems like a lot.</strong></summary>
+
+Instagram does not issue API tokens to people, only to apps. Every tool that
+touches Instagram programmatically works this way, including the ones that hide
+it behind a signup form. Doing it yourself means the token is yours, it is not
+held by a third party, and nobody can revoke your access by shutting down.
+
+It is about ten minutes, once.
+</details>
+
+<details>
+<summary><strong>Can it schedule posts?</strong></summary>
+
+No, and neither can anything else. Instagram has no scheduling API. Products
+that offer scheduling hold the post on their own servers and publish it at the
+time, which means handing them your content and your credentials.
+
+`create_container` is the honest version: stage it now, publish it when you say.
+</details>
+
+<details>
+<summary><strong>Can it read my DMs?</strong></summary>
+
+Officially, only threads where the other person messaged you, and only inside a
+24-hour window, and only once Meta grants your app Advanced Access. The
+unofficial tier reads the real inbox with no window, at the risk described in
+section 8.
+</details>
+
+<details>
+<summary><strong>Will this get my account banned?</strong></summary>
+
+The two official tiers are Meta's own documented APIs. There is no more risk in
+using them than in using the Instagram app.
+
+The unofficial tier is a real risk. It drives the private API, which is against
+Instagram's terms. Use a secondary account.
+</details>
+
+<details>
+<summary><strong>Can it post without asking me?</strong></summary>
+
+It can post when you ask it to. Publishing, deleting a comment and sending a DM
+all require the model to pass `confirm: true`, which it does after reading a
+description explaining what cannot be undone. That is a speed bump against a
+careless call, not a lock.
+
+If you want a server that cannot write at all, set `IG_READ_ONLY=1`. The write
+tools are then not registered, so the model cannot see or call them.
+</details>
+
+<details>
+<summary><strong>What data does it store, and where?</strong></summary>
+
+Follower counts and post engagement readings, in a SQLite file in your data
+directory, so it can answer "what changed since Monday". An audit log of every
+attempted write. A session file if you use the unofficial tier.
+
+All of it is local. Nothing is sent anywhere except to Instagram. Delete the
+data directory and it is gone.
+</details>
+
+<details>
+<summary><strong>Why is this Python when the other servers are TypeScript?</strong></summary>
+
+The unofficial tier depends on `instagrapi`, which is Python only. Rewriting the
+official tiers in TypeScript would split the project in two for no gain.
+</details>
+
+<details>
+<summary><strong>Why is the package name not just "instagram-mcp"?</strong></summary>
+
+That name on PyPI already belongs to somebody else. Installing it would fetch
+code that is not this. The package is `thenavidm-instagram-mcp` and the command
+it installs is `instagram-mcp`.
+</details>
+
+<details>
+<summary><strong>Does it cost anything?</strong></summary>
+
+No. The server is MIT licensed and Meta's Graph API is free at these volumes.
+You are paying for your own AI client, not for this.
+</details>
+
+<details>
+<summary><strong>Can I use it with several accounts?</strong></summary>
+
+Yes, see section 9. One server, one config file, an `account` argument on every
+tool, and a preference order for when you leave it out.
+</details>
+
+---
+
+## About the author 👋
+
+Navid Moazzez is a leading AI business strategist and the host of the AI Creator
+Summit, watched by 100,000+ creators. He helps creators and founders master AI
+and build their own AI Operating System (AI OS) to automate their business and
+life. This Instagram MCP server is one piece of that system.
 
 **Links**
 
@@ -590,13 +666,18 @@ Navid Moazzez is a leading AI business strategist and the host of the AI Creator
 
 | Library | Licence | What it does |
 |---|---|---|
-| [Python MCP SDK](https://github.com/modelcontextprotocol/python-sdk) | MIT | The MCP server, stdio and streamable HTTP |
-| [httpx2](https://github.com/encode/httpx) | BSD-3-Clause | The Graph API calls |
-| [instagrapi](https://github.com/subzeroid/instagrapi) | MIT | The unofficial tier. Optional, not installed by default |
+| [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk) | MIT | The MCP server, stdio and streamable HTTP |
+| [httpx2](https://github.com/encode/httpx) | BSD-3 | The HTTP client, already an SDK dependency |
+| [instagrapi](https://github.com/subzeroid/instagrapi) | MIT | The unofficial tier, optional extra |
 
 ## License
 
 [MIT](./LICENSE). Free to use, modify, and share.
+
+Not affiliated with, endorsed by, or sponsored by Meta Platforms, Inc.
+Instagram and Facebook are trademarks of Meta Platforms, Inc. This project uses
+Meta's public Graph API, and its optional unofficial tier is not sanctioned by
+Meta.
 
 ---
 

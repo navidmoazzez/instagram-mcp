@@ -22,7 +22,7 @@ from mcp.types import ToolAnnotations
 from ..config import pick
 from ..errors import InstagramError
 from ..runtime import Runtime, result
-from ..safety import audit, frame_rows, require_write
+from ..safety import audit, frame_rows, require_confirm, require_write, write_gate
 
 READ = ToolAnnotations(readOnlyHint=True, openWorldHint=True)
 WRITE = ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=True)
@@ -33,6 +33,7 @@ COMMENT_FIELDS = "id,text,username,timestamp,like_count"
 
 def register(server: MCPServer, runtime: Runtime) -> None:
     settings = runtime.settings
+    write = write_gate(server, settings)
     graph = runtime.graph
 
     @server.tool(description="Comments on one of your posts.", annotations=READ)
@@ -102,7 +103,7 @@ def register(server: MCPServer, runtime: Runtime) -> None:
             comments=frame_rows(comments),
         )
 
-    @server.tool(description="Reply publicly to a comment.", annotations=WRITE)
+    @write(description="Reply publicly to a comment.", annotations=WRITE)
     async def reply_to_comment(
         comment_id: str, message: str, account: str | None = None
     ) -> dict[str, Any]:
@@ -116,7 +117,7 @@ def register(server: MCPServer, runtime: Runtime) -> None:
         )
         return result(target.tier, **body)
 
-    @server.tool(
+    @write(
         description=(
             "Hide or unhide a comment. A hidden comment stays visible to whoever wrote it, "
             "which is why this is gentler than deleting and usually the right choice."
@@ -136,15 +137,22 @@ def register(server: MCPServer, runtime: Runtime) -> None:
         )
         return result(target.tier, comment_id=comment_id, hidden=hide)
 
-    @server.tool(
+    @write(
         description=(
             "Permanently delete a comment. Only works on comments on your own media, and it "
             "cannot be undone. Prefer hide_comment."
         ),
         annotations=DESTRUCTIVE,
     )
-    async def delete_comment(comment_id: str, account: str | None = None) -> dict[str, Any]:
+    async def delete_comment(
+        comment_id: str, account: str | None = None, confirm: bool = False
+    ) -> dict[str, Any]:
         require_write(settings, "delete_comment")
+        require_confirm(
+            confirm,
+            "delete_comment",
+            "permanently removes the comment. hide_comment is reversible and usually better.",
+        )
         target = pick(settings, account)
         # A real HTTP DELETE. Sending this as a POST returns 200 and deletes
         # nothing, which is the bug this server exists partly to not have.
@@ -187,7 +195,7 @@ def register(server: MCPServer, runtime: Runtime) -> None:
             target.tier, conversation_id=conversation_id, messages=frame_rows(messages)
         )
 
-    @server.tool(
+    @write(
         description=(
             "Send a direct message. Instagram only allows this inside a 24-hour window opened "
             "by the recipient messaging you first, or as one private reply to a comment. There "
@@ -197,9 +205,10 @@ def register(server: MCPServer, runtime: Runtime) -> None:
         annotations=WRITE,
     )
     async def send_dm(
-        recipient_id: str, message: str, account: str | None = None
+        recipient_id: str, message: str, account: str | None = None, confirm: bool = False
     ) -> dict[str, Any]:
         require_write(settings, "send_dm")
+        require_confirm(confirm, "send_dm", "sends a message that cannot be unsent.")
         target = pick(settings, account)
         body = await graph.call(
             target,
@@ -211,7 +220,7 @@ def register(server: MCPServer, runtime: Runtime) -> None:
                                     "message": message})
         return result(target.tier, **body)
 
-    @server.tool(
+    @write(
         description=(
             "Send a DM in reply to a comment. This is the comment-to-DM mechanic: the comment "
             "is the consent, and it is the only official way to open a conversation with "
@@ -220,9 +229,14 @@ def register(server: MCPServer, runtime: Runtime) -> None:
         annotations=WRITE,
     )
     async def private_reply_to_comment(
-        comment_id: str, message: str, account: str | None = None
+        comment_id: str, message: str, account: str | None = None, confirm: bool = False
     ) -> dict[str, Any]:
         require_write(settings, "private_reply_to_comment")
+        require_confirm(
+            confirm,
+            "private_reply_to_comment",
+            "sends a DM that cannot be unsent, and Instagram allows only one per comment.",
+        )
         target = pick(settings, account)
         body = await graph.call(
             target,

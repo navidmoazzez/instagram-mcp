@@ -76,8 +76,9 @@ class Account:
 class Settings:
     accounts: list[Account] = field(default_factory=list)
     preferred: list[str] = field(default_factory=list)
-    allow_write: bool = False
+    read_only: bool = False
     unofficial: bool = False
+    audit_log: Path | None = None
     graph_version: str = DEFAULT_GRAPH_VERSION
     data_dir: Path = field(default_factory=lambda: _default_data_dir())
     # Pacing for the unofficial tier only. The official tiers are rate limited by
@@ -95,7 +96,7 @@ class Settings:
 
     @property
     def audit_path(self) -> Path:
-        return self.data_dir / "audit.log"
+        return self.audit_log or (self.data_dir / "audit.log")
 
     def has_facebook_login(self) -> bool:
         return any(a.host == FACEBOOK_HOST for a in self.accounts)
@@ -152,13 +153,22 @@ def _accounts_from_file(path: Path) -> list[Account]:
     return out
 
 
+def _flag(env: dict[str, str], name: str) -> bool:
+    """Read a boolean env var. Present and not an explicit off value means on."""
+    raw = (env.get(name) or "").strip().lower()
+    return raw not in ("", "0", "false", "no", "off")
+
+
 def load_settings(
     *,
-    allow_write: bool = False,
     unofficial: bool = False,
     env: dict[str, str] | None = None,
 ) -> Settings:
-    """Build settings from flags and environment.
+    """Build settings from the environment.
+
+    Writes are on. IG_READ_ONLY=1 takes them away, and it does so by removing
+    the tools from the list rather than by failing the call, because a model
+    cannot misuse a tool it cannot see.
 
     Two shapes are accepted. A single account through IG_ACCESS_TOKEN and
     IG_USER_ID, which is what the reference servers do and what most people
@@ -190,8 +200,9 @@ def load_settings(
     settings = Settings(
         accounts=accounts,
         preferred=[p for p in preferred if p],
-        allow_write=allow_write,
-        unofficial=unofficial,
+        read_only=_flag(env, "IG_READ_ONLY"),
+        unofficial=unofficial or _flag(env, "IG_UNOFFICIAL"),
+        audit_log=Path(p).expanduser() if (p := env.get("IG_AUDIT_LOG")) else None,
         graph_version=env.get("IG_GRAPH_VERSION") or DEFAULT_GRAPH_VERSION,
     )
     settings.data_dir.mkdir(parents=True, exist_ok=True)

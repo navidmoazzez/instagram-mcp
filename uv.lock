@@ -436,39 +436,6 @@ wheels = [
 ]
 
 [[package]]
-name = "instagram-mcp"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "httpx2" },
-    { name = "mcp" },
-    { name = "pydantic", version = "2.12.5", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'android'" },
-    { name = "pydantic", version = "2.13.5", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'android'" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "ruff" },
-]
-unofficial = [
-    { name = "instagrapi" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "httpx2", specifier = ">=2.5.0" },
-    { name = "instagrapi", marker = "extra == 'unofficial'", specifier = ">=2.18.18" },
-    { name = "mcp", specifier = ">=2.1.1" },
-    { name = "pydantic", specifier = ">=2.12.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
-]
-provides-extras = ["unofficial", "dev"]
-
-[[package]]
 name = "instagrapi"
 version = "2.18.18"
 source = { registry = "https://pypi.org/simple" }
@@ -1161,6 +1128,39 @@ sdist = { url = "https://files.pythonhosted.org/packages/b5/b4/205b0d5241d934e8a
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c8/cb/6a6a47d5b464bd08695d254f3da6e7986cc70c9fa5d778eda57538edfe56/starlette-1.6.0-py3-none-any.whl", hash = "sha256:a86dd39d14bb45f85a3d18525215a9ef0cfd1f192ac793220e72598c90335f0c", size = 75969, upload-time = "2026-08-08T18:27:56.196Z" },
 ]
+
+[[package]]
+name = "thenavidm-instagram-mcp"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "httpx2" },
+    { name = "mcp" },
+    { name = "pydantic", version = "2.12.5", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'android'" },
+    { name = "pydantic", version = "2.13.5", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'android'" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "ruff" },
+]
+unofficial = [
+    { name = "instagrapi" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx2", specifier = ">=2.5.0" },
+    { name = "instagrapi", marker = "extra == 'unofficial'", specifier = ">=2.18.18" },
+    { name = "mcp", specifier = ">=2.1.1" },
+    { name = "pydantic", specifier = ">=2.12.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
+]
+provides-extras = ["unofficial", "dev"]
 
 [[package]]
 name = "truststore"

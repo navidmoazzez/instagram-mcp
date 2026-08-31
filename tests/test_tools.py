@@ -25,16 +25,37 @@ async def test_every_tool_is_registered_with_a_description_and_schema(make_serve
     await runtime.aclose()
 
 
-async def test_write_tools_refuse_on_a_read_only_server(make_server):
+async def test_read_only_removes_the_write_tools_from_the_list(make_server):
+    """Removed, not refused. A model cannot misuse a tool it cannot see."""
+    server, runtime = make_server({}, read_only=True)
+    names = {t.name for t in await server.list_tools()}
+    assert not names & {
+        "post", "post_carousel", "publish_reel", "publish_story", "publish_container",
+        "create_container", "reply_to_comment", "hide_comment", "delete_comment",
+        "send_dm", "private_reply_to_comment",
+    }
+    assert "get_comments" in names  # reads survive
+    await runtime.aclose()
+
+
+async def test_irreversible_writes_need_confirm(make_server, recorder):
+    """The refusal must land before any network call, not after posting."""
     server, runtime = make_server({})
     for name, args in [
         ("post", {"image_url": "u"}),
-        ("reply_to_comment", {"comment_id": "c", "message": "m"}),
         ("delete_comment", {"comment_id": "c"}),
         ("send_dm", {"recipient_id": "r", "message": "m"}),
     ]:
-        with pytest.raises(ToolError, match="--allow-write"):
+        with pytest.raises(ToolError, match="confirm=true"):
             await server.call_tool(name, args)
+    assert recorder == []
+    await runtime.aclose()
+
+
+async def test_reversible_writes_do_not_need_confirm(make_server):
+    """hide_comment is one click to undo. Confirming it would train the reflex."""
+    server, runtime = make_server({})
+    await server.call_tool("hide_comment", {"comment_id": "c1"})
     await runtime.aclose()
 
 
@@ -55,8 +76,8 @@ async def test_results_carry_the_tier_that_answered(make_server):
 
 
 async def test_delete_comment_issues_a_delete(make_server, recorder):
-    server, runtime = make_server({}, allow_write=True)
-    await server.call_tool("delete_comment", {"comment_id": "c1"})
+    server, runtime = make_server({})
+    await server.call_tool("delete_comment", {"comment_id": "c1", "confirm": True})
     assert [r.method for r in recorder] == ["DELETE"]
     await runtime.aclose()
 
@@ -89,9 +110,9 @@ async def test_unofficial_status_reports_what_is_deliberately_missing(make_serve
 
 
 async def test_carousel_rejects_a_bad_length_before_any_network_call(make_server, recorder):
-    server, runtime = make_server({}, allow_write=True)
+    server, runtime = make_server({})
     with pytest.raises(ToolError, match="2 to 10"):
-        await server.call_tool("post_carousel", {"image_urls": ["a"]})
+        await server.call_tool("post_carousel", {"image_urls": ["a"], "confirm": True})
     assert recorder == []
     await runtime.aclose()
 

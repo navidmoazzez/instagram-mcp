@@ -39,7 +39,7 @@ def _parser() -> argparse.ArgumentParser:
 
     run = sub.add_parser("run", help="Run the MCP server. This is the default.")
     _add_run_flags(run)
-    _add_run_flags(parser)  # so `instagram-mcp --allow-write` works with no subcommand
+    _add_run_flags(parser)  # so `instagram-mcp --unofficial` works with no subcommand
 
     login = sub.add_parser(
         "login", help="Log in once for the unofficial tier and save a session file."
@@ -67,14 +67,9 @@ def _parser() -> argparse.ArgumentParser:
 
 def _add_run_flags(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
-        "--allow-write",
-        action="store_true",
-        help="Enable every tool that changes something. Off by default, on purpose.",
-    )
-    parser.add_argument(
         "--unofficial",
         action="store_true",
-        help="Enable the private-API tier. Read the Risks section of the README first.",
+        help="Enable the private-API tier. Same as IG_UNOFFICIAL=1. Read the README first.",
     )
     parser.add_argument(
         "--http",
@@ -89,17 +84,17 @@ def _add_run_flags(parser: argparse.ArgumentParser) -> None:
 
 
 def _run(args: argparse.Namespace) -> int:
-    settings = load_settings(allow_write=args.allow_write, unofficial=args.unofficial)
+    settings = load_settings(unofficial=args.unofficial)
 
-    if args.unofficial:
+    if settings.unofficial:
         # Said once, on stderr, where it does not corrupt the stdio protocol.
         print(
             "instagram-mcp: unofficial tier ON. This is against Instagram's terms and can get "
             "an account restricted. Use a secondary account.",
             file=sys.stderr,
         )
-    if args.allow_write:
-        print("instagram-mcp: writes ENABLED.", file=sys.stderr)
+    if settings.read_only:
+        print("instagram-mcp: IG_READ_ONLY set, write tools are not registered.", file=sys.stderr)
 
     server, runtime = build_server(settings)
     try:

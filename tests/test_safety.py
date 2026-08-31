@@ -6,22 +6,31 @@ import pytest
 
 from instagram_mcp.config import Settings
 from instagram_mcp.safety import (
+    ConfirmationRequired,
     RateLimited,
     WriteDenied,
     audit,
     frame_rows,
     frame_untrusted,
+    require_confirm,
     require_write,
 )
 
 
-def test_read_only_blocks_writes_and_names_the_flag(tmp_path):
-    with pytest.raises(WriteDenied, match="--allow-write"):
-        require_write(Settings(data_dir=tmp_path), "post")
+def test_writes_are_allowed_by_default(tmp_path):
+    """Publishing is the point of the server. A default install can publish."""
+    require_write(Settings(data_dir=tmp_path), "post")
 
 
-def test_allow_write_permits(tmp_path):
-    require_write(Settings(allow_write=True, data_dir=tmp_path), "post")
+def test_read_only_blocks_writes_and_names_the_variable(tmp_path):
+    with pytest.raises(WriteDenied, match="IG_READ_ONLY"):
+        require_write(Settings(read_only=True, data_dir=tmp_path), "post")
+
+
+def test_confirm_is_required_for_irreversible_actions():
+    with pytest.raises(ConfirmationRequired, match="confirm=true"):
+        require_confirm(False, "post", "publishes immediately.")
+    require_confirm(True, "post", "publishes immediately.")
 
 
 def test_framing_labels_content_as_untrusted():

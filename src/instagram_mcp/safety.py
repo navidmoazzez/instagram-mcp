@@ -5,9 +5,10 @@ for using this server, so it is worth reading rather than skimming.
 
 Four separate problems, four separate mechanisms:
 
-  Accidental writes.   Nothing writes unless the server was started with
-                       --allow-write. A misread instruction cannot post to a
-                       creator's feed on a default install.
+  Accidental writes.   Writes work by default, because publishing is the point.
+                       The irreversible ones take confirm=True, which a model
+                       sets deliberately after reading why. IG_READ_ONLY=1
+                       removes every write tool from the list entirely.
 
   Account restriction. The unofficial tier paces itself and stops at an hourly
                        ceiling. Instagram restricts accounts for machine-speed
@@ -48,16 +49,55 @@ class WriteDenied(InstagramError):
     """A write was attempted on a read-only server."""
 
 
+class ConfirmationRequired(InstagramError):
+    """An irreversible action was called without confirm=True."""
+
+
 class RateLimited(InstagramError):
     """The local hourly ceiling for the unofficial tier was reached."""
 
 
 def require_write(settings: Settings, action: str) -> None:
-    """Gate every mutating call. Called first, before any argument validation."""
-    if not settings.allow_write:
+    """Gate every mutating call. Called first, before any argument validation.
+
+    On a normal install this passes. It only refuses when the operator set
+    IG_READ_ONLY, and in that case the tool should not have been registered at
+    all, so reaching here means a stale client tool list.
+    """
+    if settings.read_only:
         raise WriteDenied(
-            f"{action} would change something on Instagram, and this server is read-only. "
-            "Restart it with --allow-write to enable writes. This is the default on purpose."
+            f"{action} would change something on Instagram, and this server was started "
+            "with IG_READ_ONLY set. Unset it and restart to enable writes."
+        )
+
+
+def write_gate(server: Any, settings: Settings) -> Any:
+    """Decorator factory for write tools. Registers them only when writes are on.
+
+    IG_READ_ONLY removes the tools rather than failing the call. A refusal still
+    leaves the tool in the list, and a model that can see a tool keeps trying it
+    and reports the refusal as a problem to be solved. A tool that was never
+    registered cannot be called or argued with.
+    """
+
+    def maybe(*args: Any, **kwargs: Any) -> Any:
+        if settings.read_only:
+            return lambda fn: fn
+        return server.tool(*args, **kwargs)
+
+    return maybe
+
+
+def require_confirm(confirm: bool, action: str, consequence: str) -> None:
+    """Gate the handful of actions that cannot be undone from a chat window.
+
+    Deliberately not on likes, replies or hides: each of those is one click to
+    undo, and asking to confirm everything trains the reflex that makes the
+    confirmation on a real deletion worthless.
+    """
+    if not confirm:
+        raise ConfirmationRequired(
+            f"{action} {consequence} Call it again with confirm=true if that is what you want."
         )
 
 

@@ -36,8 +36,10 @@ def recorder():
 def make_server(settings, recorder):
     """Build a fully registered server over a scripted transport."""
 
-    def build(routes: dict[str, object], *, allow_write: bool = False, unofficial: bool = False):
-        settings.allow_write = allow_write
+    def build(routes: dict[str, object], *, read_only: bool = False, unofficial: bool = False):
+        # Set before register_all: read-only removes the write tools at
+        # registration, so flipping it afterwards would change nothing.
+        settings.read_only = read_only
         settings.unofficial = unofficial
 
         def handler(request: httpx2.Request) -> httpx2.Response:
