@@ -2,12 +2,12 @@
 
 ## Reporting a vulnerability
 
-Use GitHub's private vulnerability reporting on this repository. Please do not
-open a public issue for a security problem.
+[Report it privately](https://github.com/thenavidm/instagram-mcp/security/advisories/new).
+Please do not open a public issue for a security problem: an issue is visible to
+everyone the moment you file it, including whoever would use the bug.
 
 Include what you did, what happened, and what you expected. A proof of concept
-helps. Expect a reply within a week. Reporters are credited in the fix notes
-unless they would rather not be.
+helps. Reporters are credited in the fix notes unless they would rather not be.
 
 ## What this server holds
 
