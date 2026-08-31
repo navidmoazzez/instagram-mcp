@@ -1,13 +1,12 @@
 # Instagram MCP
 
-Instagram MCP server for Claude Code and AI agents. Read your own accounts, research any Business or Creator account on the platform, publish, and answer comments.
-
-Three tiers of access behind one tool surface, and every answer tells you which tier it came from.
-
-[![PyPI](https://img.shields.io/pypi/v/thenavidm-instagram-mcp?color=blue)](https://pypi.org/project/thenavidm-instagram-mcp/)
 [![Licence](https://img.shields.io/badge/licence-MIT-green)](./LICENSE)
 [![YouTube](https://img.shields.io/badge/YouTube-@thenavidm-red?logo=youtube&logoColor=white)](https://youtube.com/@thenavidm?sub_confirmation=1)
 [![X](https://img.shields.io/badge/X-@thenavidm-black?logo=x)](https://x.com/thenavidm)
+
+Instagram MCP server for Claude Code and AI agents. Read your own accounts, research any Business or Creator account on the platform, publish, and answer comments.
+
+Three tiers of access behind one tool surface, and every answer tells you which tier it came from.
 
 Built by [Navid Moazzez](https://navid.me).
 
@@ -45,8 +44,7 @@ Claude: Reading your account, then comparing.
 | 9 | [Multiple accounts](#9-multiple-accounts-) | One server, several logins |
 | 10 | [Notes and gotchas](#10-notes-and-gotchas-) | Quotas, windows, and silent failures |
 | 11 | [Troubleshooting](#11-troubleshooting-) | Symptom to cause |
-| 12 | [Build from source](#12-build-from-source-) | Run the tests |
-| | [FAQ](#faq-) | Including what an MCP server is |
+| 12 | [FAQ](#12-faq-) | Including what an MCP server is |
 
 ---
 
@@ -69,10 +67,15 @@ reads, so it can answer the version of the question people actually have.
 
 ## 2. Quick install ⚡
 
-Python 3.11 or newer. No Instagram account needed for this step.
+> **Not on PyPI yet.** Install it from a checkout until it is published. The
+> commands below are what it will be, and the rest of this README already works
+> against a local install.
+
+Python 3.11 or newer.
 
 ```bash
-uv tool install thenavidm-instagram-mcp
+git clone https://github.com/thenavidm/instagram-mcp
+uv tool install ./instagram-mcp
 ```
 
 No `uv` yet? It is a Python package manager, one command to install:
@@ -87,15 +90,21 @@ Check it:
 instagram-mcp --version
 ```
 
-The package is `thenavidm-instagram-mcp`. The command it installs is
-`instagram-mcp`. They differ because the short name on PyPI belongs to somebody
-else, and installing that would fetch code that is not this.
-
-To add the unofficial tier as well, see [section 8](#8-the-three-tiers-) first,
-then:
+Once published:
 
 ```bash
-uv tool install "thenavidm-instagram-mcp[unofficial]"
+uv tool install thenavidm-instagram-mcp
+```
+
+The package name and the command differ on purpose. The short name on PyPI
+belongs to somebody else, so installing that would fetch code that is not this.
+The installed command is `instagram-mcp` either way.
+
+For the unofficial tier as well, read [section 8](#8-the-three-tiers-) first,
+then add the extra:
+
+```bash
+uv tool install "./instagram-mcp[unofficial]"
 ```
 
 ---
@@ -113,44 +122,77 @@ Instagram app under Settings, then Account type and tools.
 
 ### Step 1: create the app
 
-1. Go to [developers.facebook.com/apps](https://developers.facebook.com/apps) and log in.
-2. Click **Create app**.
-3. App name: anything. Contact email: yours.
-4. Under **Use cases**, pick **Other**, then **Next**.
-5. App type: **Business**, then **Next**, then **Create app**.
+1. Go to
+   [developers.facebook.com/apps/creation](https://developers.facebook.com/apps/creation/)
+   and log in.
+2. **App details.** Enter your app's name and a contact email address, then
+   **Next**. The name is not shown to anyone but you at this stage.
+3. **Use cases.** Select **Manage messaging and content on Instagram**, then
+   **Next**.
 
-### Step 2: add the product
+   If you also want Threads, tick **Access Threads API** on this same screen.
+   One app can carry both, and doing it now saves creating a second app later.
+   Incompatible use cases are greyed out.
+4. **Business.** Choose **A verified business portfolio**, **An unverified
+   business portfolio**, or **I don't want to connect a business portfolio
+   yet**. The last option is fine to start with.
+5. **Requirements.** Review whatever it lists, then **Next**.
+6. **Overview.** Check the details, then **Go to dashboard**.
 
-In the left sidebar, find **Add product**.
+### Step 2: add the permissions
 
-- For the **Facebook Login** path, add **Facebook Login for Business**.
-- For the **Instagram Login** path, add **Instagram**.
+1. Click **Dashboard** in the left menu.
+2. Select the use case to customise.
+3. Click **Add all required permissions**.
 
-Pick Facebook Login unless you have a reason not to. It is the only path that
-reaches `discover_account` and the hashtag tools, and the Page tokens it returns
-do not expire. It does require your Instagram account to be linked to a Facebook
-Page, which is done in the Instagram app under Settings, then Sharing to other
-apps.
+You can also reach these under **Permissions and features** in the left menu, to
+add or remove individual ones.
 
-### Step 3: note your app id and secret
+### Step 3: pick your login path
 
-Left sidebar, **App settings**, then **Basic**. Copy the **App ID** and click
-**Show** next to **App secret**. You need both in section 4.
+Two setups, and they reach different things. This is the decision that matters
+most, so read the table in [section 8](#8-the-three-tiers-) before choosing.
 
-### Step 4: generate a short-lived token
+**Instagram Login** is the simpler one. In the left menu, **API setup with
+Instagram login**. It reaches only accounts you own.
 
-1. Open [Graph API Explorer](https://developers.facebook.com/tools/explorer).
-2. Top right, select your app from the dropdown.
-3. Click **Generate access token** and approve the dialog.
-4. Add the scopes for your path, then click **Generate access token** again.
-
-| Path | Scopes |
+| Permission | For |
 |---|---|
-| Facebook Login (recommended) | `instagram_basic`, `instagram_content_publish`, `instagram_manage_insights`, `instagram_manage_comments`, `pages_show_list`, `pages_read_engagement` |
-| Instagram Login | `instagram_business_basic`, `instagram_business_content_publish`, `instagram_business_manage_comments`, `instagram_business_manage_messages` |
+| `instagram_business_basic` | reading the account |
+| `instagram_business_content_publish` | publishing |
+| `instagram_business_manage_comments` | comments |
+| `instagram_business_manage_messages` | DMs |
 
-Copy the token. It expires in about an hour, which is fine: section 4 trades it
-for a long-lived one.
+**Facebook Login** reaches more. It is the only path that gets
+`discover_account` and the hashtag tools, and the Page tokens it returns do not
+expire. It needs your Instagram account linked to a Facebook Page.
+
+| Permission | For |
+|---|---|
+| `instagram_basic` | reading the account |
+| `instagram_content_publish` | publishing |
+| `instagram_manage_comments` | comments |
+| `instagram_manage_insights` | reach, saves, impressions |
+| `instagram_manage_messages` | DMs |
+| `pages_show_list` | finding the Page |
+| `pages_read_engagement` | reading the linked Page |
+| `business_management` | required by Meta for the messaging and content setups |
+
+### Step 4: generate a token
+
+In the use case's **Generate access tokens** section, click **Add account** and
+approve the dialog. Meta returns a short-lived token.
+
+For the Facebook Login path you can also use
+[Graph API Explorer](https://developers.facebook.com/tools/explorer): select
+your app, add the permissions above, then generate.
+
+Copy the token. It is short-lived, which is fine: section 4 trades it for a
+long-lived one.
+
+> **Your app does not need review to work.** App Review is only needed when
+> people outside your app's Roles list will use it. For your own accounts, skip
+> **Go to app review** entirely.
 
 ---
 
@@ -169,7 +211,20 @@ instagram-mcp token \
 It swaps the short-lived token for a long-lived one, finds every Page you manage
 with a linked Instagram account, and prints a ready-to-paste `IG_ACCOUNTS_FILE`.
 
-Instagram Login tokens expire after 60 days. Extend them before they do:
+Underneath, the Instagram Login exchange is this:
+
+```
+GET https://graph.instagram.com/access_token
+  ?grant_type=ig_exchange_token
+  &client_secret=YOUR_APP_SECRET
+  &access_token=THE_SHORT_LIVED_TOKEN
+```
+
+That returns a token good for **60 days**. The request carries your app secret,
+so it belongs in server-side code only. Never in a browser, never in anything
+shipped to a device, never committed.
+
+Extend it before it expires:
 
 ```bash
 instagram-mcp refresh
@@ -177,6 +232,16 @@ instagram-mcp refresh
 
 Facebook Login Page tokens do not expire, which is the other reason to prefer
 that path.
+
+### One app covers Instagram and Threads
+
+You do not create a second app. The same app carries both use cases, one app id,
+one secret, one Roles list, so a tester added once can use either.
+
+What is not shared is the token. Each product mints its own against its own
+host, so an Instagram token does not work on Threads. If you ticked **Access
+Threads API** in step 1, see
+[threads-mcp](https://github.com/thenavidm/threads-mcp).
 
 ---
 
@@ -292,7 +357,7 @@ them.
 
 ---
 
-## 7. Tools 🛠️
+## 7. Tools 🧰
 
 45 tools. Every result carries a `source` field naming the tier that answered,
 so a model can never present a scraped guess as an official metric.
@@ -396,7 +461,7 @@ oversight.
 
 ---
 
-## 8. The three tiers 🎚️
+## 8. The three tiers 🧩
 
 Instagram does not have one API. It has two, plus a private one, and they reach
 completely different things.
@@ -457,38 +522,35 @@ IG_PREFERRED=thenavidm,thenavidai
 
 ---
 
-## 10. Notes and gotchas ⚠️
+## 10. Notes and gotchas 🚧
 
-**100 posts per 24 hours**, per account, across every API client. Not just this
-one. `get_publishing_limit` tells you where you are.
-
-**30 unique hashtags per rolling 7 days.** Resolved ids are cached locally so
-repeat lookups do not spend a slot, but the thirty-first new hashtag in a week
-fails.
-
-**`business_discovery` sees Business and Creator accounts only.** Never personal
-ones, never private ones. It returns an error that does not say which of those
-it is.
-
-**DMs need a 24-hour window.** Instagram allows a DM only inside a window opened
-by the other person messaging you, or as one private reply to a comment. There
-is no official way to message somebody cold.
-
-**Reading DMs needs Advanced Access** from Meta App Review on most apps.
-`list_conversations` returns empty rather than erroring until you have it.
-
-**Insight metrics change.** Meta deprecates and renames them regularly. `doctor`
-names which ones your account still answers, which is faster than reading the
-changelog.
-
-**Comments and DMs are written by strangers.** Every text field from another
-person comes back wrapped in an untrusted-content fence telling the model to
-report it, not obey it. This is the most injectable surface an agent gets handed,
-and "summarise my comments" is one of the first things anyone asks.
-
-**Every write is logged.** One JSON line per attempted write, allowed or
-refused, to `IG_AUDIT_LOG` or the data directory. The model has no tool to read
-or edit that file.
+- **Publishing needs public HTTPS URLs.** Meta fetches the media server-side, so
+  a local file path will not work. Host the image or video somewhere reachable
+  first.
+- **100 posts per 24 hours**, per account, across every API client, not just this
+  one. `get_publishing_limit` tells you where you are.
+- **30 unique hashtags per rolling 7 days.** Resolved ids are cached locally so
+  repeat lookups do not spend a slot, but the thirty-first new hashtag fails.
+- **`business_discovery` sees Business and Creator accounts only.** Never
+  personal, never private. The error does not say which of those it hit.
+- **DMs need a 24-hour window.** Instagram allows a DM only inside a window the
+  other person opened by messaging you, or as one private reply to a comment.
+  There is no official way to message somebody cold.
+- **Reading DMs needs Advanced Access** from Meta App Review on most apps.
+  `list_conversations` returns empty rather than erroring until you have it.
+- **Insight metrics change.** Meta deprecates and renames them regularly.
+  `doctor` names the ones your account still answers, which is faster than
+  reading the changelog.
+- **Errors come back as a structured result**, not an exception, carrying the
+  Graph error's `code`, `subcode` and `fbtrace_id`. That is Instagram's error,
+  not a bug in this server.
+- **Comments and DMs are written by strangers.** Every text field from another
+  person comes back wrapped in an untrusted-content fence telling the model to
+  report it, not obey it. This is the most injectable surface an agent gets
+  handed, and "summarise my comments" is one of the first things anyone asks.
+- **Every write is logged.** One JSON line per attempted write, allowed or
+  refused, to `IG_AUDIT_LOG` or the data directory. The model has no tool to
+  read or edit that file.
 
 ---
 
@@ -510,21 +572,8 @@ Run `instagram-mcp doctor` first. It diagnoses most of this.
 
 ---
 
-## 12. Build from source 🏗️
 
-```bash
-git clone https://github.com/thenavidm/instagram-mcp
-cd instagram-mcp
-uv sync
-uv run pytest
-```
-
-The tests run against a faked transport and never touch the network, so they are
-safe to run without a token.
-
----
-
-## FAQ ❓
+## 12. FAQ ❓
 
 <details>
 <summary><strong>What is an MCP server?</strong></summary>

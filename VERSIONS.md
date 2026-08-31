@@ -2,9 +2,34 @@
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
-| instagram-mcp | 0.1.0 | 2026-08-31 |
+| thenavidm-instagram-mcp | 0.2.0 | 2026-09-01 |
 
 ---
+
+## 0.2.0
+
+Breaking, twice.
+
+**Writes are on by default.** The `--allow-write` flag is gone. A permission that
+has to be passed on every install is one an operator sets permanently and stops
+reading, which is worse than none because it looks like protection. The
+irreversible actions take `confirm=true` instead: `post`, `post_carousel`,
+`publish_reel`, `publish_story`, `publish_container`, `delete_comment`,
+`send_dm`, `private_reply_to_comment`, `unofficial_send_dm`. Replies and hides do
+not, because confirming everything is what makes a real confirmation worthless.
+
+`IG_READ_ONLY=1` replaces the flag and works by not registering the write tools
+at all, so a model cannot see them. `IG_UNOFFICIAL` and `IG_AUDIT_LOG` move to
+the environment for the same reason: a client config is already a JSON env block.
+
+**Renamed to `thenavidm-instagram-mcp`.** The short name on PyPI belongs to
+somebody else, so the previous install line fetched a stranger's code. The
+installed command is still `instagram-mcp`.
+
+Also: `SKILL.md` ships inside the wheel, `SECURITY.md`, a digest-pinned
+Dockerfile and a systemd install script. `AGENTS.md` is now the agent document
+and `CLAUDE.md` points at it. README rebuilt so install comes before the section
+that hands you the credential it needs.
 
 ## 0.1.0
 
