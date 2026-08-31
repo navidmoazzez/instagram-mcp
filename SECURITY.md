@@ -1,12 +1,13 @@
 # Security
 
-## Reporting something
+## Reporting a vulnerability
 
-Email [n@navid.me](mailto:n@navid.me). Please do not open a public issue for a
-vulnerability.
+Use GitHub's private vulnerability reporting on this repository. Please do not
+open a public issue for a security problem.
 
 Include what you did, what happened, and what you expected. A proof of concept
-helps. You will get a reply.
+helps. Expect a reply within a week. Reporters are credited in the fix notes
+unless they would rather not be.
 
 ## What this server holds
 

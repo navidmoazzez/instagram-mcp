@@ -67,9 +67,10 @@ reads, so it can answer the version of the question people actually have.
 
 ## 2. Quick install ⚡
 
+> [!NOTE]
 > **Not on PyPI yet.** Install it from a checkout until it is published. The
-> commands below are what it will be, and the rest of this README already works
-> against a local install.
+> command below is what it will become, and the rest of this README already
+> works against a local install.
 
 Python 3.11 or newer.
 
@@ -190,6 +191,7 @@ your app, add the permissions above, then generate.
 Copy the token. It is short-lived, which is fine: section 4 trades it for a
 long-lived one.
 
+> [!TIP]
 > **Your app does not need review to work.** App Review is only needed when
 > people outside your app's Roles list will use it. For your own accounts, skip
 > **Go to app review** entirely.
@@ -290,12 +292,13 @@ it everywhere.
 }
 ```
 
-The path must be absolute. Claude Desktop does not inherit your shell PATH, so a
-bare command name fails silently. Get the absolute path with
-`which instagram-mcp` on macOS or `where instagram-mcp` on Windows. On Windows,
-escape the backslashes.
-
-Quit Claude Desktop completely and reopen it. Closing the window is not enough.
+> [!TIP]
+> The path must be absolute. Claude Desktop does not inherit your shell PATH, so
+> a bare command name fails silently. Get it with `which instagram-mcp` on macOS
+> or `where instagram-mcp` on Windows, and escape the backslashes on Windows.
+>
+> Then quit Claude Desktop completely and reopen it. Closing the window is not
+> enough.
 
 ### Cursor
 
@@ -474,11 +477,13 @@ completely different things.
 
 Most people want the middle one and do not know it exists.
 
-The unofficial tier drives Instagram's private API through `instagrapi`. That is
-against Instagram's terms of service and it can get an account restricted or
-banned. It is not installed by default, it is off unless you set
-`IG_UNOFFICIAL=1` or pass `--unofficial`, and it prints a warning on stderr when
-it starts. Point it at a secondary account, never your main one.
+> [!WARNING]
+> The unofficial tier drives Instagram's private API through `instagrapi`. That
+> is against Instagram's terms of service and it can get an account restricted
+> or banned. Point it at a secondary account, never your main one.
+
+It is not installed by default, it is off unless you set `IG_UNOFFICIAL=1` or
+pass `--unofficial`, and it prints a warning on stderr when it starts.
 
 It also paces itself: a random delay between calls and a local hourly ceiling
 that is lower than Instagram's own. Instagram restricts accounts for
@@ -688,6 +693,10 @@ tool, and a preference order for when you leave it out.
 </details>
 
 ---
+
+## Questions
+
+Run into a problem or have a question? Open an issue and I will help.
 
 ## About the author 👋
 

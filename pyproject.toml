@@ -9,7 +9,7 @@ description = "Instagram for AI agents. Official Graph API plus an opt-in unoffi
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
-authors = [{ name = "Navid Moazzez", email = "hello@navid.me" }]
+authors = [{ name = "Navid Moazzez" }]
 keywords = ["mcp", "model-context-protocol", "instagram", "claude", "ai-agents"]
 classifiers = [
   "Development Status :: 4 - Beta",
