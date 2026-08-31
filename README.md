@@ -696,7 +696,7 @@ tool, and a preference order for when you leave it out.
 
 ## Questions
 
-Run into a problem or have a question? Open an issue and I will help.
+Run into a problem or have a question? [Open an issue](https://github.com/thenavidm/instagram-mcp/issues) and I will help.
 
 ## About the author 👋
 
