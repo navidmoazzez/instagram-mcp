@@ -128,12 +128,52 @@ Instagram app under Settings, then Account type and tools.
    and log in.
 2. **App details.** Enter your app's name and a contact email address, then
    **Next**. The name is not shown to anyone but you at this stage.
-3. **Use cases.** Select **Manage messaging and content on Instagram**, then
-   **Next**.
+3. **Use cases.** This screen is a list of what the app is allowed to do.
+   Tick **Manage messaging and content on Instagram**, then **Next**.
 
-   If you also want Threads, tick **Access Threads API** on this same screen.
-   One app can carry both, and doing it now saves creating a second app later.
-   Incompatible use cases are greyed out.
+   That one name covers reading posts, insights, comments, DMs and publishing.
+   There is no separate "Instagram API" option, which is what people look for
+   and do not find.
+
+   The other names on this screen belong to different products:
+
+   | Use case | What it is for |
+   |---|---|
+   | **Manage messaging and content on Instagram** | this server, tick it |
+   | **Access Threads API** | Threads, see below |
+   | **Manage everything on your Page** | Facebook Pages |
+
+   You can tick more than one. Incompatible combinations are greyed out, so if
+   an option will not tick, it conflicts with something already selected.
+
+> [!IMPORTANT]
+> **Older guides tell you to pick "Other" and then choose an app type of
+> "Business". Those options are not on this screen.**
+>
+> Meta reorganised app creation around use cases, so instead of picking a
+> generic type and adding a product afterwards, you pick the thing you want to
+> do and Meta adds the products for you. Almost every Instagram tutorial online
+> still describes the old flow.
+>
+> If you are looking for "Other", you are on the right screen. Tick **Manage
+> messaging and content on Instagram** instead. There is no app type step
+> after it.
+
+> [!TIP]
+> **You do not need a callback or redirect URL for this server.**
+>
+> A redirect URL is for a hosted login flow, where other people sign into
+> *your* app and get sent back to *your* website. That is not what is
+> happening here. You are generating a token for your own account, from your
+> own dashboard, and the server runs on your machine.
+>
+> The Facebook Login setup does not ask for one at all. The Instagram Login
+> setup has a **Business login settings** section with OAuth redirect URIs,
+> deauthorization and data deletion URLs. You can leave those alone unless you
+> are building a website other people log into.
+>
+> If a guide tells you to host a callback URL to use an MCP server, it is
+> describing a different job.
 4. **Business.** Choose **A verified business portfolio**, **An unverified
    business portfolio**, or **I don't want to connect a business portfolio
    yet**. The last option is fine to start with.
@@ -235,15 +275,25 @@ instagram-mcp refresh
 Facebook Login Page tokens do not expire, which is the other reason to prefer
 that path.
 
-### One app covers Instagram and Threads
+### One app also covers Threads and Facebook
 
-You do not create a second app. The same app carries both use cases, one app id,
-one secret, one Roles list, so a tester added once can use either.
+You do not create a second app for those. The same app carries several use
+cases, with one app id, one secret and one Roles list, so a tester you add once
+can use all of them.
 
 What is not shared is the token. Each product mints its own against its own
-host, so an Instagram token does not work on Threads. If you ticked **Access
-Threads API** in step 1, see
-[threads-mcp](https://github.com/thenavidm/threads-mcp).
+host, so an Instagram token does not work on Threads.
+
+If you want either, tick its use case back in step 1 and then follow that
+server's own setup, which is written up in its repo rather than duplicated here:
+
+| You also want | Tick | Then |
+|---|---|---|
+| Threads | **Access Threads API** | a Threads server is in progress, not published yet |
+| Facebook ad research | nothing, the Ad Library is public and needs no app | [facebook-ad-library-mcp](https://github.com/thenavidm/facebook-ad-library-mcp) |
+
+Adding a use case later is fine. It does not invalidate the token you already
+have.
 
 ---
 
