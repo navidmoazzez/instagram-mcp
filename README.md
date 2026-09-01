@@ -112,6 +112,22 @@ uv tool install "./instagram-mcp[unofficial]"
 
 ## 3. Create your Meta app 🔑
 
+> [!TIP]
+> **One app covers Facebook, Instagram and Threads.**
+>
+> Use cases are ticked in a list, and you can tick several. If you plan to
+> use more than one of these, do it now rather than making three apps and
+> managing three sets of credentials.
+>
+> | Use case | For | Server |
+> |---|---|---|
+> | Manage everything on your Page | Facebook Pages | [facebook-mcp](https://github.com/navidmoazzez/facebook-mcp) |
+> | Manage messaging and content on Instagram | Instagram | this one |
+> | Access Threads API | Threads | [threads-mcp](https://github.com/navidmoazzez/threads-mcp) |
+>
+> Incompatible combinations grey out. If an option will not tick, it
+> conflicts with something already selected.
+
 Instagram's API does not hand out tokens directly. You create an app in Meta's
 developer dashboard, and the app issues the token. It is free and takes about
 ten minutes.
