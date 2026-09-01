@@ -8,7 +8,7 @@ Instagram MCP server for Claude Code and AI agents. Read your own accounts, rese
 
 Three tiers of access behind one tool surface, and every answer tells you which tier it came from.
 
-Built by [Navid Moazzez](https://navid.me).
+Built by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=readme&utm_campaign=instagram-mcp).
 
 ```
 You: which of my last 20 posts is still growing, and what are my
@@ -759,8 +759,8 @@ life. This Instagram MCP server is one piece of that system.
 
 **Links**
 
-- Personal website: [navid.me](https://navid.me)
-- Navid Media: [navid.media](https://navid.media)
+- Personal website: [navid.me](https://navid.me?utm_source=github&utm_medium=readme&utm_campaign=instagram-mcp)
+- Navid Media: [navid.media](https://navid.media?utm_source=github&utm_medium=readme&utm_campaign=instagram-mcp)
 - YouTube: [@thenavidm](https://youtube.com/@thenavidm?sub_confirmation=1) and [@thenavidai](https://youtube.com/@thenavidai?sub_confirmation=1)
 - X: [@thenavidm](https://x.com/thenavidm)
 - Instagram: [@thenavidm](https://instagram.com/thenavidm)
@@ -785,4 +785,4 @@ Meta.
 
 ---
 
-© 2026 [NM Media](https://navid.media). Made with ❤️ by [Navid Moazzez](https://navid.me).
+© 2026 [NM Media](https://navid.media?utm_source=github&utm_medium=readme&utm_campaign=instagram-mcp). Made with ❤️ by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=readme&utm_campaign=instagram-mcp).
