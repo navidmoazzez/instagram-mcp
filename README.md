@@ -1,3 +1,5 @@
+<img src="https://cdn.navid.media/connectors/instagram-icon.png" alt="Instagram" width="88">
+
 # Instagram MCP
 
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
@@ -656,6 +658,7 @@ exposes Instagram.
 
 You install it once, put your credentials in the client's config, and then ask
 in plain language. You do not call the tools yourself.
+
 </details>
 
 <details>
@@ -664,6 +667,7 @@ in plain language. You do not call the tools yourself.
 You need one for everything except the unofficial tier. Instagram's API does not
 work on personal accounts. Switching is free and reversible, in the Instagram app under
 Settings, then Account type and tools.
+
 </details>
 
 <details>
@@ -675,6 +679,7 @@ it behind a signup form. Doing it yourself means the token is yours, it is not
 held by a third party, and nobody can revoke your access by shutting down.
 
 It is about ten minutes, once.
+
 </details>
 
 <details>
@@ -685,6 +690,7 @@ that offer scheduling hold the post on their own servers and publish it at the
 time, which means handing them your content and your credentials.
 
 `create_container` is the honest version: stage it now, publish it when you say.
+
 </details>
 
 <details>
@@ -694,6 +700,7 @@ It reads only the threads where the other person messaged you, only inside a
 24-hour window, and only once Meta grants your app Advanced Access. The
 unofficial tier reads the real inbox with no window, at the risk described in
 section 8.
+
 </details>
 
 <details>
@@ -704,6 +711,7 @@ using them than in using the Instagram app.
 
 The unofficial tier is a real risk. It drives the private API, which is against
 Instagram's terms. Use a secondary account.
+
 </details>
 
 <details>
@@ -716,6 +724,7 @@ careless call, not a lock.
 
 If you want a server that cannot write at all, set `IG_READ_ONLY=1`. The write
 tools are then not registered, so the model cannot see or call them.
+
 </details>
 
 <details>
@@ -727,6 +736,7 @@ attempted write. A session file if you use the unofficial tier.
 
 All of it is local. Nothing is sent anywhere except to Instagram. Delete the
 data directory and it is gone.
+
 </details>
 
 <details>
@@ -734,6 +744,7 @@ data directory and it is gone.
 
 The unofficial tier depends on `instagrapi`, which is Python only. Rewriting the
 official tiers in TypeScript would split the project in two for no gain.
+
 </details>
 
 <details>
@@ -742,6 +753,7 @@ official tiers in TypeScript would split the project in two for no gain.
 That name on PyPI already belongs to somebody else. Installing it would fetch
 code that is not this. The package is `thenavidm-instagram-mcp` and the command
 it installs is `instagram-mcp`.
+
 </details>
 
 <details>
@@ -750,6 +762,7 @@ it installs is `instagram-mcp`.
 It costs nothing. The server is MIT licensed and Meta's Graph API is free at
 these volumes.
 You are paying for your own AI client, not for this.
+
 </details>
 
 <details>
@@ -758,6 +771,7 @@ You are paying for your own AI client, not for this.
 You can connect as many as you like, as section 9 covers. One server, one config
 file, an `account` argument on every tool, and a preference order for when you
 leave it out.
+
 </details>
 
 ---
