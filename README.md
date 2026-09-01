@@ -48,8 +48,6 @@ Claude: Reading your account, then comparing.
 | 11 | [Troubleshooting](#11-troubleshooting-) | Symptom to cause |
 | 12 | [FAQ](#12-faq-) | Including what an MCP server is |
 
----
-
 ## 1. What you can ask it 💬
 
 - Which of my posts from the last month is still gaining likes?
@@ -64,8 +62,6 @@ Claude: Reading your account, then comparing.
 The first two are the point. Instagram will tell you your follower count right
 now. It will not tell you what it was on Monday. This server remembers what it
 reads, so it can answer the version of the question people actually have.
-
----
 
 ## 2. Quick install ⚡
 
@@ -109,8 +105,6 @@ then add the extra:
 ```bash
 uv tool install "./instagram-mcp[unofficial]"
 ```
-
----
 
 ## 3. Create your Meta app 🔑
 
@@ -254,8 +248,6 @@ long-lived one.
 > people outside your app's Roles list will use it. For your own accounts, skip
 > **Go to app review** entirely.
 
----
-
 ## 4. Get your token 🔑
 
 One command does the exchange:
@@ -312,8 +304,6 @@ server's own setup, which is written up in its repo rather than duplicated here:
 
 Adding a use case later is fine. It does not invalidate the token you already
 have.
-
----
 
 ## 5. Connect your client 🔌
 
@@ -405,8 +395,6 @@ All of them take the same three things: the command `instagram-mcp`, any flags
 as arguments, and the environment variables above. See
 [docs/clients.md](docs/clients.md) for the exact file and key names.
 
----
-
 ## 6. Check it worked 🩺
 
 ```bash
@@ -425,8 +413,6 @@ saying so. `doctor` says so plainly.
 **A token generated without the scopes.** Adding scopes in Graph API Explorer
 does not update a token you already copied. Generate a new one after adding
 them.
-
----
 
 ## 7. Tools 🧰
 
@@ -530,8 +516,6 @@ actions that get accounts restricted fastest. `unofficial_status` reports them
 as missing on purpose, so it is a decision on the record rather than an
 oversight.
 
----
-
 ## 8. The three tiers 🧩
 
 Instagram does not have one API. It has two, plus a private one, and they reach
@@ -562,8 +546,6 @@ instagram-mcp login          # once, saves a session file
 IG_UNOFFICIAL=1 instagram-mcp
 ```
 
----
-
 ## 9. Multiple accounts 👥
 
 Point `IG_ACCOUNTS_FILE` at a JSON array instead of setting a single token.
@@ -592,8 +574,6 @@ Every tool takes an optional `account` argument. When you leave it out, the
 ```bash
 IG_PREFERRED=thenavidm,thenavidai
 ```
-
----
 
 ## 10. Notes and gotchas 🚧
 
@@ -625,8 +605,6 @@ IG_PREFERRED=thenavidm,thenavidai
   refused, to `IG_AUDIT_LOG` or the data directory. The model has no tool to
   read or edit that file.
 
----
-
 ## 11. Troubleshooting 🔧
 
 Run `instagram-mcp doctor` first. It diagnoses most of this.
@@ -642,9 +620,6 @@ Run `instagram-mcp doctor` first. It diagnoses most of this.
 | Write tools are absent | `IG_READ_ONLY` is set |
 | A write asks for confirmation | Working as intended. Call it again with `confirm: true` |
 | Unofficial tools refuse | Tier is off. Set `IG_UNOFFICIAL=1` and run `instagram-mcp login` once |
-
----
-
 
 ## 12. FAQ ❓
 
@@ -773,8 +748,6 @@ file, an `account` argument on every tool, and a preference order for when you
 leave it out.
 
 </details>
-
----
 
 ## Questions
 
