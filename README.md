@@ -645,8 +645,8 @@ in plain language. You do not call the tools yourself.
 <details>
 <summary><strong>Do I need a Business account?</strong></summary>
 
-Yes, for everything except the unofficial tier. Instagram's API does not work on
-personal accounts. Switching is free and reversible, in the Instagram app under
+You need one for everything except the unofficial tier. Instagram's API does not
+work on personal accounts. Switching is free and reversible, in the Instagram app under
 Settings, then Account type and tools.
 </details>
 
@@ -664,7 +664,7 @@ It is about ten minutes, once.
 <details>
 <summary><strong>Can it schedule posts?</strong></summary>
 
-No, and neither can anything else. Instagram has no scheduling API. Products
+It cannot, and neither can anything else. Instagram has no scheduling API. Products
 that offer scheduling hold the post on their own servers and publish it at the
 time, which means handing them your content and your credentials.
 
@@ -674,7 +674,7 @@ time, which means handing them your content and your credentials.
 <details>
 <summary><strong>Can it read my DMs?</strong></summary>
 
-Officially, only threads where the other person messaged you, and only inside a
+It reads only the threads where the other person messaged you, only inside a
 24-hour window, and only once Meta grants your app Advanced Access. The
 unofficial tier reads the real inbox with no window, at the risk described in
 section 8.
@@ -705,8 +705,8 @@ tools are then not registered, so the model cannot see or call them.
 <details>
 <summary><strong>What data does it store, and where?</strong></summary>
 
-Follower counts and post engagement readings, in a SQLite file in your data
-directory, so it can answer "what changed since Monday". An audit log of every
+It stores follower counts and post engagement readings in a SQLite file in your
+data directory, so it can answer "what changed since Monday". An audit log of every
 attempted write. A session file if you use the unofficial tier.
 
 All of it is local. Nothing is sent anywhere except to Instagram. Delete the
@@ -731,15 +731,17 @@ it installs is `instagram-mcp`.
 <details>
 <summary><strong>Does it cost anything?</strong></summary>
 
-No. The server is MIT licensed and Meta's Graph API is free at these volumes.
+It costs nothing. The server is MIT licensed and Meta's Graph API is free at
+these volumes.
 You are paying for your own AI client, not for this.
 </details>
 
 <details>
 <summary><strong>Can I use it with several accounts?</strong></summary>
 
-Yes, see section 9. One server, one config file, an `account` argument on every
-tool, and a preference order for when you leave it out.
+You can connect as many as you like, as section 9 covers. One server, one config
+file, an `account` argument on every tool, and a preference order for when you
+leave it out.
 </details>
 
 ---
@@ -783,4 +785,4 @@ Meta.
 
 ---
 
-© 2026 NM Media. Made with ❤️ by [Navid Moazzez](https://navid.me).
+© 2026 [NM Media](https://navid.media). Made with ❤️ by [Navid Moazzez](https://navid.me).
