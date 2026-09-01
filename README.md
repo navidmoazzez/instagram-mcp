@@ -75,7 +75,7 @@ reads, so it can answer the version of the question people actually have.
 Python 3.11 or newer.
 
 ```bash
-git clone https://github.com/thenavidm/instagram-mcp
+git clone https://github.com/navidmoazzez/instagram-mcp
 uv tool install ./instagram-mcp
 ```
 
@@ -290,7 +290,7 @@ server's own setup, which is written up in its repo rather than duplicated here:
 | You also want | Tick | Then |
 |---|---|---|
 | Threads | **Access Threads API** | a Threads server is in progress, not published yet |
-| Facebook ad research | nothing, the Ad Library is public and needs no app | [facebook-ad-library-mcp](https://github.com/thenavidm/facebook-ad-library-mcp) |
+| Facebook ad research | nothing, the Ad Library is public and needs no app | [facebook-ad-library-mcp](https://github.com/navidmoazzez/facebook-ad-library-mcp) |
 
 Adding a use case later is fine. It does not invalidate the token you already
 have.
@@ -746,7 +746,7 @@ tool, and a preference order for when you leave it out.
 
 ## Questions
 
-Run into a problem or have a question? [Open an issue](https://github.com/thenavidm/instagram-mcp/issues) and I will help.
+Run into a problem or have a question? [Open an issue](https://github.com/navidmoazzez/instagram-mcp/issues) and I will help.
 
 ## About the author 👋
 

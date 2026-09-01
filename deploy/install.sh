@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install instagram-mcp as a systemd service on a Debian or Ubuntu host.
 #
-#   curl -fsSL https://raw.githubusercontent.com/thenavidm/instagram-mcp/main/deploy/install.sh | sudo bash
+#   curl -fsSL https://raw.githubusercontent.com/navidmoazzez/instagram-mcp/main/deploy/install.sh | sudo bash
 #
 # It installs the package, creates a dedicated user, writes a unit that listens
 # on localhost only, and prints what you still have to do by hand.
