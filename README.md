@@ -1,6 +1,6 @@
 # Instagram MCP
 
-[![Licence](https://img.shields.io/badge/licence-MIT-green)](./LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![YouTube](https://img.shields.io/badge/YouTube-@thenavidm-red?logo=youtube&logoColor=white)](https://youtube.com/@thenavidm?sub_confirmation=1)
 [![X](https://img.shields.io/badge/X-@thenavidm-black?logo=x)](https://x.com/thenavidm)
 
@@ -166,7 +166,7 @@ Instagram app under Settings, then Account type and tools.
 > **Older guides tell you to pick "Other" and then choose an app type of
 > "Business". Those options are not on this screen.**
 >
-> Meta reorganised app creation around use cases, so instead of picking a
+> Meta reorganized app creation around use cases, so instead of picking a
 > generic type and adding a product afterwards, you pick the thing you want to
 > do and Meta adds the products for you. Almost every Instagram tutorial online
 > still describes the old flow.
@@ -784,7 +784,7 @@ life. This Instagram MCP server is one piece of that system.
 
 ## Dependencies
 
-| Library | Licence | What it does |
+| Library | License | What it does |
 |---|---|---|
 | [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk) | MIT | The MCP server, stdio and streamable HTTP |
 | [httpx2](https://github.com/encode/httpx) | BSD-3 | The HTTP client, already an SDK dependency |
