@@ -1,4 +1,4 @@
-# Instagram MCP Versions
+# Instagram MCP changelog
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
