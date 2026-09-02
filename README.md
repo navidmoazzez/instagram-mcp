@@ -770,6 +770,8 @@ life. This Instagram MCP server is one piece of that system.
 - Instagram: [@thenavidm](https://instagram.com/thenavidm)
 - LinkedIn: [thenavidm](https://linkedin.com/in/thenavidm)
 
+If this is useful, star the repo and come say hi on [X](https://x.com/thenavidm).
+
 ## Dependencies
 
 | Library | License | What it does |
