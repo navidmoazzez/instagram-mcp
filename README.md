@@ -13,24 +13,7 @@ Three tiers of access behind one tool surface, and every answer tells you which 
 
 Built by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=readme&utm_campaign=instagram-mcp).
 
-```
-You: which of my last 20 posts is still growing, and what are my
-     three closest competitors doing that I am not?
-
-Claude: Reading your account, then comparing.
-
-  Still climbing (likes gained since the last reading)
-    "The 4 AI tools I actually pay for"     +412  posted 6 days ago
-    "Nobody talks about this part"          +198  posted 3 days ago
-
-  Competitors, median engagement over their last 12 posts
-    @a   118k followers   4.1%   carousels, 7 to 9 slides
-    @b    64k followers   3.3%   reels under 20 seconds
-    @c   210k followers   1.2%   single images
-
-  The one thing all three do that you do not: the first slide is a
-  question, not a claim.
-```
+<img src="https://cdn.navid.media/repos/instagram-mcp.gif?v=1" alt="Claude Code using the Instagram MCP server" width="520">
 
 ## Contents
 
