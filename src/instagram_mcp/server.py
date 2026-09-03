@@ -57,7 +57,7 @@ def build_server(settings: Settings) -> tuple[MCPServer, Runtime]:
         name="instagram",
         version=__version__,
         instructions=INSTRUCTIONS,
-        website_url="https://github.com/navidmoazzez/instagram-mcp",
+        website_url="https://github.com/thenavidm/instagram-mcp",
     )
 
     register_all(server, runtime)
